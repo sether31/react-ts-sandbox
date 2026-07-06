@@ -6,10 +6,10 @@ import { CartContextProvider } from './context/CartContext.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <CartContextProvider>
-      <NotificationContextProvider>
+    <NotificationContextProvider>
+      <CartContextProvider>
         <App />
-      </NotificationContextProvider>
-    </CartContextProvider>
+      </CartContextProvider>
+    </NotificationContextProvider>
   </StrictMode>,
 )
