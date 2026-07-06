@@ -14,10 +14,11 @@ const NotificationBanner = () => {
             borderRadius: "4px",
             color: "#ffffffff",
             fontWeight: "bold",
-            backgroundColor: notif.type === "success" ? "darkgreen" : "crimson",
+            backgroundColor: notif.status === "success" ? "darkgreen" : "crimson",
             boxShadow: "0px 4px 6px rgba(0,0,0,0.1)"
           }}
         >
+          {notif.message}
         </div>
       ))}
     </div>
