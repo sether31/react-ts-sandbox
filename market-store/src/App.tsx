@@ -1,8 +1,9 @@
+import MarketStore from "./components/MarketStore"
 
 function App() {
   return (
     <>
-      <h1 className="text-3xl text-center text-blue-500">Market Store</h1>
+      <MarketStore />
     </>
   )
 }
