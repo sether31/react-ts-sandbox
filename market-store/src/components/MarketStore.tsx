@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, type ChangeEvent } from "react"
 
 type Product = {
   id: number
@@ -12,6 +12,7 @@ const MarketStore = () => {
   const [product, setProduct] = useState<Product[]>([]);
   const [category, setCategory] = useState<string[]>([]);
   const [activeCategory, setActiveCategory] = useState("all");
+  const [search, setSearch] = useState('')
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -41,6 +42,11 @@ const MarketStore = () => {
 
   const handleCategoryClick = (cat: string) => {
     setActiveCategory(cat)
+  }
+
+  const handleSearchQuery = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value)
+    console.log(e.target.value)
   }
 
   const tryAgain = () => {
@@ -73,7 +79,7 @@ const MarketStore = () => {
     <div className="min-h-screen p-6 bg-gray-50"> 
       <section className="flex flex-col gap-8 md:flex-row">
         <aside className="sticky w-full p-6 mt-20 border rounded-lg shadow-md h-155 min-h-155 top-6 md:w-1/4">
-          <h2 className="m-6 text-2xl font-bold text-center text-blue-500">Categories</h2>
+          <h2 className="m-6 text-2xl font-bold text-center text-gray-800">Categories</h2>
 
           {category && category.map((val, index) => (
             <button 
@@ -87,10 +93,26 @@ const MarketStore = () => {
         </aside>
         
         <article className="w-full md:w-3/4">
-          <h2 className="m-6 text-2xl font-bold text-center text-blue-500">Market Store</h2>
+          <h2 className="m-6 text-3xl font-bold text-center text-gray-800">Market Store</h2>
+          
+          <div className="flex justify-end mb-6">
+            <span className="px-2 py-1 text-white bg-gray-800 rounded-tl-md rounded-bl-md peer">Q</span>
+            <input 
+              type="text" 
+              onChange={(e) => handleSearchQuery(e)} 
+              value={search}
+              className="block px-2 py-1 border rounded-tr-md rounded-br-md peer:hover:border-2" 
+            />
+          </div>
 
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {product.filter((cat) => activeCategory === "all" ? true : cat.category === activeCategory).map((prod) => {
+            {product.filter((cat) => {
+              if((activeCategory === "all" || cat.category === activeCategory) && cat.title.toLowerCase().includes(search)) {
+                return true
+              } else {
+                return false
+              }
+            }).map((prod) => {
               return (
                 <div className="flex flex-col h-full p-4 border rounded-lg" key={prod.id}>
                   <div className="h-32 mb-4">
