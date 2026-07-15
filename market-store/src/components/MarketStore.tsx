@@ -43,6 +43,12 @@ const MarketStore = () => {
     setActiveCategory(cat)
   }
 
+  const tryAgain = () => {
+    fetchProducts();
+    setError('')
+    setIsLoading(true);
+  }
+
   if(isLoading) {
     return (
       <div className="fixed inset-0 z-50 flex flex-col items-center justify-center">
@@ -50,6 +56,15 @@ const MarketStore = () => {
         <p className="mt-4 text-sm font-semibold text-gray-900 animate-pulse">
           Loading...
         </p>
+      </div>
+    )
+  }
+
+  if(error) {
+    return (
+      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center">
+        <h1 className="text-3xl font-black md:text-5xl">Something <span className="text-red-700">went</span> wrong</h1>
+        <button className="px-8 py-4 mt-6 duration-150 ease-in-out border rounded-lg cursor-pointer hover:bg-blue-500 hover:text-white hover:scale-99" onClick={() => tryAgain()}>Try again</button>
       </div>
     )
   }
