@@ -1,4 +1,6 @@
 import { useEffect, useState, type ChangeEvent } from "react"
+import Sidebar from "./Sidebar"
+import SearchBar from "./SearchBar"
 
 type Product = {
   id: number
@@ -78,32 +80,19 @@ const MarketStore = () => {
   return (
     <div className="min-h-screen p-6 bg-gray-50"> 
       <section className="flex flex-col gap-8 md:flex-row">
-        <aside className="sticky w-full p-6 mt-20 border rounded-lg shadow-md h-155 min-h-155 top-6 md:w-1/4">
-          <h2 className="m-6 text-2xl font-bold text-center text-gray-800">Categories</h2>
-
-          {category && category.map((val, index) => (
-            <button 
-              key={index} 
-              onClick={() => handleCategoryClick(val)}
-              className={`capitalize underline block cursor-pointer underline-offset-2 ${activeCategory === val && "text-blue-500"}`}
-            >
-              {val}
-            </button>
-          ))}
-        </aside>
+        <Sidebar 
+          category={category} 
+          handleCategoryClick={handleCategoryClick} 
+          activeCategory={activeCategory}
+        />
         
         <article className="w-full md:w-3/4">
           <h2 className="m-6 text-3xl font-bold text-center text-gray-800">Market Store</h2>
           
-          <div className="flex justify-end mb-6">
-            <span className="px-2 py-1 text-white bg-gray-800 rounded-tl-md rounded-bl-md peer">Q</span>
-            <input 
-              type="text" 
-              onChange={(e) => handleSearchQuery(e)} 
-              value={search}
-              className="block px-2 py-1 border rounded-tr-md rounded-br-md peer:hover:border-2" 
-            />
-          </div>
+          <SearchBar 
+            search={search}
+            handleSearchQuery={handleSearchQuery}
+          />
 
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {product.filter((cat) => {
