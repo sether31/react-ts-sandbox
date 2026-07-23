@@ -1,9 +1,12 @@
 import MarketStore from "./components/MarketStore"
+import { CartContextProvider } from "./context/CartContext"
 
 function App() {
   return (
     <>
-      <MarketStore />
+      <CartContextProvider>
+        <MarketStore />
+      </CartContextProvider>
     </>
   )
 }
