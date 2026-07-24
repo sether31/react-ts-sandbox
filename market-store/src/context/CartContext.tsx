@@ -9,6 +9,7 @@ type CartContextProps = {
 type CartContextType = {
   cart: CartItem[]
   addToCart: (product: Product) => void
+  minusCartQuantity: (product: Product) => void
   removeFromCart: (product: Product) => void
   clearCart: () => void
 }
@@ -45,6 +46,28 @@ export const CartContextProvider = ({children}: CartContextProps) => {
     }
   }
 
+  const minusCartQuantity = (product: Product) => {
+    const existingItem = cart.find((prod) => prod.id === product.id);
+
+    if(existingItem) {
+
+      if(existingItem.quantity <= 1) {
+        removeFromCart(existingItem)
+        return;
+      }
+
+      setCart((prevCart) => {
+        return prevCart.map((item) => {
+          if(item.id === product.id) {
+            return {...item, quantity: item.quantity - 1}
+          } else {
+            return item
+          }
+        })
+      })
+    }
+  }
+
   const removeFromCart = (product: Product) => {
     setCart((prod) => {
       return prod.filter((item) => item.id !== product.id)
@@ -56,7 +79,7 @@ export const CartContextProvider = ({children}: CartContextProps) => {
   }
 
   return (
-    <CartContext.Provider value={{cart, addToCart, removeFromCart, clearCart}}>
+    <CartContext.Provider value={{cart, addToCart, minusCartQuantity, removeFromCart, clearCart}}>
       {children}
     </CartContext.Provider>
   )
