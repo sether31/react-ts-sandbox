@@ -4,6 +4,10 @@ import SearchBar from "./SearchBar"
 import type { CartItem, Product } from "../data/Data"
 import { useCart } from "../context/CartContext"
 import CustomButton from "./CustomButton"
+import { FiMinus, FiPlus, FiShoppingCart } from "react-icons/fi"
+import { TfiClose } from "react-icons/tfi"
+import { FaPlus } from "react-icons/fa"
+import { IoMdClose } from "react-icons/io"
 
 const MarketStore = () => {
   const [product, setProduct] = useState<Product[]>([]);
@@ -13,7 +17,8 @@ const MarketStore = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const {cart, addToCart, removeFromCart, clearCart} = useCart();
+  const {cart, addToCart, minusCartQuantity, removeFromCart, clearCart} = useCart();
+  const [openCart, setOpenCart] = useState(false) 
 
   useEffect(() => {
     console.log("Cart updated! Current items:", cart);
@@ -81,7 +86,7 @@ const MarketStore = () => {
   }
 
   return (
-    <div className="min-h-screen p-6 bg-gray-50 font-sans"> 
+    <div className="min-h-screen p-6 font-sans bg-gray-50"> 
       <section className="flex flex-col gap-8 md:flex-row">
         <Sidebar 
           category={category} 
@@ -90,13 +95,94 @@ const MarketStore = () => {
         />
         
         <article className="w-full md:w-3/4">
-          <h2 className="m-6 text-3xl font-bold text-center text-gray-800">Market Store</h2>
+          <h2 className="m-6 text-3xl font-bold text-center text-gray-900">Market Store</h2>
           
-          <SearchBar 
-            search={search}
-            handleSearchQuery={handleSearchQuery}
-          />
+          {/* search bar and cart btn */}
+          <div className="flex items-center justify-end gap-2">
+            <SearchBar 
+              search={search}
+              handleSearchQuery={handleSearchQuery}
+            />
 
+            <div className="relative" onClick={() => setOpenCart(true)}>
+              <FiShoppingCart className="w-6 h-6 mb-6 text-gray-800 cursor-pointer" />
+              <span className="absolute flex items-center justify-center w-5 h-5 text-white bg-black rounded-full -top-2 -right-3">{cart.length}</span>
+            </div>
+          </div>
+
+          {/* cart container */}
+          <div 
+            className={`h-dvh w-full md:w-[400px] bg-white shadow-2xl border fixed top-0 ease-in-out duration-300 z-50 transition-all p-6 overflow-y-auto ${openCart ? 'right-0': '-right-full'}`}
+          >
+            <div className="flex items-center">
+              <IoMdClose 
+                size={35} 
+                onClick={() => setOpenCart(false)}
+                className="duration-300 ease-in-out cursor-pointer shrink hover:rotate-90 font-bolder" 
+              />
+
+              <h1 className="font-serif text-3xl font-bold text-center text-gray-900 grow">Cart</h1>
+            </div>
+
+            <div className="mt-10">
+              {cart.length === 0 ? (
+                <h2 className="flex mt-10 flex-col items-center justify-center h-[80%] gap-4 text-2xl font-bold text-gray-900">
+                  <FiShoppingCart size={48} />
+                  <span>Your Cart is Empty</span>
+                </h2>
+              ): (
+                <div className="grid grid-cols-1 gap-6">
+                  {cart.map((item) => {
+                    const remainingStock = item.stocks - item.quantity
+                    
+                    return (
+                      <div 
+                        key={item.id}
+                        className={`w-full h-full p-4 border min-h-40 grid grid-cols-[.3fr_1.8fr] md:grid-cols-[.5fr_1.5fr] gap-4 rounded-md`}
+                      >
+                        <div className="p-2 h-30 aspect-square">
+                          <img className="object-contain w-full h-full" src={item.image} alt={item.title} />
+                        </div>
+                        <div>
+                          <p className="text-blue-500 capitalize">{item.category}</p>
+                          <h3 title={item.title} className="font-bold text-gray-900 capitalize line-clamp-2">{item.title}</h3>
+                          <p className="font-semibold text-green-900">₱ {item.price}</p>
+                          <p>Stocks: {item.stocks}</p>
+                          <div className="flex justify-between ">
+                            <div className="flex items-center gap-1">
+                              <CustomButton
+                                className={`border cursor-pointer bg-blue-500 text-white active:scale-90 ease-in-out duration-300`} 
+                                onClick={() => minusCartQuantity(item)}
+                              >
+                                <FiMinus className="border" />
+                              </CustomButton>
+                              
+                              <p>{item.quantity}</p>
+                              
+                              <CustomButton
+                                className={`border active:scale-90 ease-in-out duration-300 ${remainingStock ? 'cursor-pointer bg-blue-500 text-white' : 'bg-gray-300 cursor-not-allowed'}`} 
+                                onClick={() => addToCart(item)}
+                              >
+                                <FiPlus />
+                              </CustomButton>
+                            </div>
+                            <p 
+                              className="text-right text-red-700 capitalize cursor-pointer"
+                              onClick={() => removeFromCart(item)}
+                            >
+                              remove
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* product container */}
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {product.filter((cat) => {
               if((activeCategory === "all" || cat.category === activeCategory) && cat.title.toLowerCase().includes(search)) {
@@ -115,15 +201,14 @@ const MarketStore = () => {
                     <img src={prod.image} className="object-contain w-full h-full" alt={prod.title} /> 
                   </div>
                   <div className="flex flex-col grow">
-                    <h3 className="text-lg font-semibold text-gray-900 capitalize md:text-lg line-clamp-2">{prod.title}</h3>
+                    <p className="text-blue-500 capitalize">{prod.category}</p>
+                    <h3 title={prod.title} className="text-lg font-bold text-gray-900 capitalize md:text-lg line-clamp-2">{prod.title}</h3>
                     <div className="mt-auto">
-                      <p className="text-green-700">₱ {prod.price}</p>
-                      <p className="text-blue-500 capitalize">{prod.category}</p>
-                      <p>Stocks: {remainingStock}</p>
+                      <p className="font-semibold text-green-700">₱ {prod.price}</p>
+                      <p>Stocks: {prod.stocks}</p>
                       <CustomButton 
                         className={`border py-1 px-2 mt-2 rounded-sm active:scale-95 duration-300 ease-in-out ${remainingStock ? 'cursor-pointer bg-green-700 text-white' : 'bg-gray-300 cursor-not-allowed'}`}
                         onClick={() => addToCart(prod)}
-                        disabled={remainingStock === 0}
                       >
                         Add to cart
                       </CustomButton>
