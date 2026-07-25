@@ -114,14 +114,23 @@ const MarketStore = () => {
           <div 
             className={`h-dvh w-full md:w-[400px] bg-white shadow-2xl border fixed top-0 ease-in-out duration-300 z-50 transition-all p-6 overflow-y-auto ${openCart ? 'right-0': '-right-full'}`}
           >
-            <div className="flex items-center">
+            <div className={`flex items-center ${cart.length !== 0 && 'justify-between'}`}>
               <IoMdClose 
                 size={35} 
                 onClick={() => setOpenCart(false)}
-                className="duration-300 ease-in-out cursor-pointer shrink hover:rotate-90 font-bolder" 
+                className={`duration-300 ease-in-out cursor-pointer hover:rotate-90 font-bolder ${cart.length === 0 && 'shrink'}`} 
               />
 
-              <h1 className="font-serif text-3xl font-bold text-center text-gray-900 grow">Cart</h1>
+              <h1 className={`font-serif text-3xl font-bold text-gray-900 ${cart.length === 0 && 'grow text-center'}`}>Cart</h1>
+
+              {cart.length !== 0 && (
+                <CustomButton
+                  className="text-red-800 capitalize duration-300 ease-in-out cursor-pointer active:scale-95"
+                  onClick={() => clearCart()}
+                >
+                  Remove all
+                </CustomButton>
+              )}
             </div>
 
             <div className="mt-10">
@@ -167,7 +176,7 @@ const MarketStore = () => {
                               </CustomButton>
                             </div>
                             <p 
-                              className="text-right text-red-700 capitalize cursor-pointer"
+                              className="text-right text-red-700 capitalize duration-300 ease-in-out cursor-pointer active:scale-95"
                               onClick={() => removeFromCart(item)}
                             >
                               remove
@@ -179,6 +188,10 @@ const MarketStore = () => {
                   })}
                 </div>
               )}
+            </div>
+            
+            <div>
+              
             </div>
           </div>
 
