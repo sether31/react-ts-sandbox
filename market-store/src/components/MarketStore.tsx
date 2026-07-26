@@ -1,12 +1,10 @@
 import { useEffect, useState, type ChangeEvent } from "react"
 import Sidebar from "./Sidebar"
 import SearchBar from "./SearchBar"
-import type { CartItem, Product } from "../data/Data"
+import type { Product } from "../data/Data"
 import { useCart } from "../context/CartContext"
 import CustomButton from "./CustomButton"
 import { FiMinus, FiPlus, FiShoppingCart } from "react-icons/fi"
-import { TfiClose } from "react-icons/tfi"
-import { FaPlus } from "react-icons/fa"
 import { IoMdClose } from "react-icons/io"
 
 const MarketStore = () => {
@@ -128,7 +126,7 @@ const MarketStore = () => {
                   className="text-red-800 capitalize duration-300 ease-in-out cursor-pointer active:scale-95"
                   onClick={() => clearCart()}
                 >
-                  Remove all
+                  Clear all
                 </CustomButton>
               )}
             </div>
@@ -189,10 +187,34 @@ const MarketStore = () => {
                 </div>
               )}
             </div>
-            
-            <div>
-              
-            </div>
+
+            {cart.length > 0 && (
+              <div className="block h-40 pt-4 mt-20 text-gray-900 border-t">
+                {cart.map((item) => {
+                  return (
+                    <div 
+                      key={item.id}
+                      className="flex flex-wrap justify-between"
+                    >
+                      <p title={item.title} className="font-semibold">{(item.title).slice(0, 10) + '...'}</p>
+                      <p>₱{item.price} x {item.quantity}</p>
+                      <p>₱{(item.price * item.quantity).toFixed(2)}</p>
+                    </div>
+                  )
+                })}
+
+                <h3 className="flex flex-wrap justify-between font-black">
+                  <span>Total:</span> <span>₱{cart.reduce((acc, curr) => (acc + (curr.price * curr.quantity)), 0).toFixed(2)}</span>
+                </h3>
+
+                <CustomButton 
+                  className="block px-2 py-1 mt-4 ml-auto text-white duration-300 ease-in-out bg-black border rounded-sm cursor-pointer active:scale-95"
+                  onClick={() => clearCart()}
+                >
+                  Checkout
+                </CustomButton>
+              </div>
+            )}
           </div>
 
           {/* product container */}
