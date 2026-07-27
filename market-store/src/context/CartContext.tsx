@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from "react"
 import type { CartItem, Product } from "../data/Data";
+import { useNotification } from "./NotificationContext";
 
 
 type CartContextProps = {
@@ -8,6 +9,7 @@ type CartContextProps = {
 
 type CartContextType = {
   cart: CartItem[]
+  setCart: React.Dispatch<React.SetStateAction<CartItem[]>>
   addToCart: (product: Product) => void
   minusCartQuantity: (product: Product) => void
   removeFromCart: (product: Product) => void
@@ -18,6 +20,7 @@ export const CartContext = createContext<CartContextType | null>(null);
 
 export const CartContextProvider = ({children}: CartContextProps) => {
   const [cart, setCart] = useState<CartItem[]>([]);
+  const { addNotification } = useNotification();
 
   const addToCart = (product: Product) => {
     const existingItem = cart.find((prod) => prod.id === product.id);
@@ -37,12 +40,16 @@ export const CartContextProvider = ({children}: CartContextProps) => {
         })
       })
 
+      addNotification("success", "Successfully added quantity")
+
     } else {
       if(product.stocks === 0) return ;
       setCart((prevCart) => [
         ...prevCart,
         {...product, quantity: 1}
       ])
+      
+      addNotification("success", "Successfully added to cart!")
     }
   }
 
@@ -53,6 +60,8 @@ export const CartContextProvider = ({children}: CartContextProps) => {
 
       if(existingItem.quantity <= 1) {
         removeFromCart(existingItem)
+        
+        addNotification("success", "The product has been removed to cart")
         return;
       }
 
@@ -65,6 +74,8 @@ export const CartContextProvider = ({children}: CartContextProps) => {
           }
         })
       })
+      
+      addNotification("success", "Successfully deduct 1 quantity to the cart!")
     }
   }
 
@@ -72,14 +83,18 @@ export const CartContextProvider = ({children}: CartContextProps) => {
     setCart((prod) => {
       return prod.filter((item) => item.id !== product.id)
     })
+    
+    addNotification("success", "Successfully remove the product from the cart!")
   }
 
   const clearCart = () => {
     setCart([])
+    
+    addNotification("success", "Successfully clear the cart!")
   }
 
   return (
-    <CartContext.Provider value={{cart, addToCart, minusCartQuantity, removeFromCart, clearCart}}>
+    <CartContext.Provider value={{cart, setCart, addToCart, minusCartQuantity, removeFromCart, clearCart}}>
       {children}
     </CartContext.Provider>
   )

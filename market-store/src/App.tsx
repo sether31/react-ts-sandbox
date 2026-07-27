@@ -1,12 +1,16 @@
 import MarketStore from "./components/MarketStore"
 import { CartContextProvider } from "./context/CartContext"
+import { NotificationContextProvider } from "./context/NotificationContext"
 
 function App() {
   return (
     <>
-      <CartContextProvider>
-        <MarketStore />
-      </CartContextProvider>
+      
+      <NotificationContextProvider>
+        <CartContextProvider>
+          <MarketStore />
+        </CartContextProvider>
+      </NotificationContextProvider>
     </>
   )
 }

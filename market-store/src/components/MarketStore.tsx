@@ -6,6 +6,8 @@ import { useCart } from "../context/CartContext"
 import CustomButton from "./CustomButton"
 import { FiMinus, FiPlus, FiShoppingCart } from "react-icons/fi"
 import { IoMdClose } from "react-icons/io"
+import NotificationBanner from "./NotificationBanner"
+import { useNotification } from "../context/NotificationContext"
 
 const MarketStore = () => {
   const [product, setProduct] = useState<Product[]>([]);
@@ -15,8 +17,10 @@ const MarketStore = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const {cart, addToCart, minusCartQuantity, removeFromCart, clearCart} = useCart();
-  const [openCart, setOpenCart] = useState(false) 
+  const {cart, setCart, addToCart, minusCartQuantity, removeFromCart, clearCart} = useCart();
+  const [openCart, setOpenCart] = useState(false);
+
+  const { addNotification } = useNotification();
 
   useEffect(() => {
     console.log("Cart updated! Current items:", cart);
@@ -84,6 +88,9 @@ const MarketStore = () => {
   }
 
   return (
+  <>
+    <NotificationBanner />
+
     <div className="min-h-screen p-6 font-sans bg-gray-50"> 
       <section className="flex flex-col gap-8 md:flex-row">
         <Sidebar 
@@ -209,7 +216,10 @@ const MarketStore = () => {
 
                 <CustomButton 
                   className="block px-2 py-1 mt-4 ml-auto text-white duration-300 ease-in-out bg-black border rounded-sm cursor-pointer active:scale-95"
-                  onClick={() => clearCart()}
+                  onClick={() => {
+                    setCart([])
+                    addNotification("success", "Checkout successfully!")
+                  }}
                 >
                   Checkout
                 </CustomButton>
@@ -256,6 +266,7 @@ const MarketStore = () => {
         </article>
       </section>
     </div>
+  </>
   )
 }
 
