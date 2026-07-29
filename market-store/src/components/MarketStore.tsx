@@ -7,6 +7,7 @@ import CustomButton from "./CustomButton"
 import NotificationBanner from "./NotificationBanner"
 import CartDrawer from "./CartDrawer"
 import { FiShoppingCart } from "react-icons/fi"
+import ProductGrid from "./ProductGrid"
 
 const MarketStore = () => {
   const [product, setProduct] = useState<Product[]>([]);
@@ -115,41 +116,12 @@ const MarketStore = () => {
           />
 
           {/* product container */}
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {product.filter((cat) => {
-              if((activeCategory === "all" || cat.category === activeCategory) && cat.title.toLowerCase().includes(search)) {
-                return true
-              } else {
-                return false
-              }
-            }).map((prod) => {
-              const itemInCart = cart.find((item) => item.id === prod.id)
-              const currentQuantity = itemInCart ? itemInCart.quantity : 0
-              const remainingStock = prod.stocks - currentQuantity
-
-              return (
-                <div className="flex flex-col h-full p-4 border rounded-lg" key={prod.id}>
-                  <div className="h-32 mb-4">
-                    <img src={prod.image} className="object-contain w-full h-full" alt={prod.title} /> 
-                  </div>
-                  <div className="flex flex-col grow">
-                    <p className="text-blue-500 capitalize cursor-pointer" onClick={() => setActiveCategory(prod.category)}>{prod.category}</p>
-                    <h3 title={prod.title} className="text-lg font-bold text-gray-900 capitalize md:text-lg line-clamp-2">{prod.title}</h3>
-                    <div className="mt-auto">
-                      <p className="font-semibold text-green-700">₱ {prod.price}</p>
-                      <p>Stocks: {prod.stocks}</p>
-                      <CustomButton 
-                        className={`border py-1 px-2 mt-2 rounded-sm active:scale-95 duration-300 ease-in-out ${remainingStock ? 'cursor-pointer bg-green-700 text-white' : 'bg-gray-300 cursor-not-allowed'}`}
-                        onClick={() => addToCart(prod)}
-                      >
-                        Add to cart
-                      </CustomButton>
-                    </div>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
+          <ProductGrid 
+            product={product}
+            search={search}
+            activeCategory={activeCategory}
+            setActiveCategory={setActiveCategory}
+          />
         </article>
       </section>
     </div>
